@@ -1,2 +1,2 @@
 # MyBOJ
-It's my own repository that upload BOJ codes.
+It's my own repository be uploaded BOJ codes.
