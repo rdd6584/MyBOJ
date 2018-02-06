@@ -1,0 +1,38 @@
+typedef unsigned long long ull;
+// (n < 1373653) // (n < 9080191) // (n < 4759123141)
+int a[2] = {2, 3};
+int a[3][3] = { { 2, 3 }, {31, 73}, { 2, 7, 61} };
+
+ull modulo(ull a, ull b, ull mod) {
+	ull sum = 1;
+
+	while (b) {
+		if (b % 2) sum = sum * a % mod;
+		a = a * a % mod;
+		b /= 2;
+	}
+
+	return sum;
+}
+
+int isPrime(ull n, ull a) { // (수, 판별수)
+	ull d = n - 1;
+	int s = 0;
+	ull temp = 1;
+
+	while (d % 2 == 0) {
+		s++;
+		d /= 2;
+	}
+
+	temp = modulo(a, d, n);
+	if (temp == 1 || temp == n - 1) return 1;
+
+	for (int r = 1; r < s; r++) {
+		temp = temp * temp % n;
+		if (temp == n - 1) return 1;
+	}
+	
+	return 0;
+}
+

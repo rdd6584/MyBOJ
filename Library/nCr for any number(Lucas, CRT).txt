@@ -1,0 +1,166 @@
+#include <cstdio>
+#include <vector>
+#define fi first
+#define se second
+using namespace std;
+
+typedef long long ll;
+typedef pair<ll, int> pli;
+typedef pair<int, int> pii;
+
+ll K_MOD;
+vector<vector<vector<pii>>> set;
+vector<pli> pr;
+vector<int> ans;
+
+void get_prime() {
+	pr.clear();
+	char sieve[4000001] = { 0 };
+	sieve[1] = 1;
+	ll tk = K_MOD;
+	int c;
+
+	for (int i = 2; i * i <= K_MOD; i++) {
+		if (!sieve[i]) {
+			if (tk % i == 0) {
+				c = 0;
+				while (tk % i == 0) {
+					c++;
+					tk /= i;
+				}
+				pr.push_back({ i, c });
+			}
+			if (tk == 1) break;
+			for (int j = i * i; j <= K_MOD; j += i)
+				sieve[j] = 1;
+		}
+	}
+	if (tk != 1) pr.push_back({ tk, 1 });
+}
+
+
+ll uclid(ll r1, ll r2) {
+	ll r, t, s, MOD = r1;
+	ll s1 = 1, s2 = 0;
+	ll t1 = 0, t2 = 1;
+	ll q;
+
+	while (r2) {
+		q = r1 / r2;
+		r = r1 - q * r2;
+		r1 = r2; r2 = r;
+
+		s = s1 - q * s2;
+		s1 = s2; s2 = s;
+
+		t = t1 - q * t2;
+		t1 = t2; t2 = t;
+	}
+
+	if (t1 < 0) t1 += MOD;
+	return t1;
+}
+
+void make_set(int pn) {
+	long long pq = 1, bpq = 1;
+	long long p = pr[pn].fi;
+	int q = pr[pn].se;
+	set[pn].resize(q + 1);
+	pii temp;
+
+	for (int i = 0; i < q; i++)
+		bpq *= p;
+
+	for (int i = 1; i <= q; i++) {
+		pq *= p;
+		set[pn][i].reserve(pq);
+		temp = { 1, 1 };
+		set[pn][i].push_back(temp);
+
+		for (ll j = 1; j < pq; j++) {
+			if (j % p) {
+				temp.fi = temp.fi * j % pq;
+				temp.se = uclid(bpq, temp.fi);
+			}
+			set[pn][i].push_back(temp);
+		}
+	}
+}
+
+int lucas(ll n, ll k, int pn) {
+	int e[30] = { 0 }, d = 0, oo = 0;
+	ll p = pr[pn].fi, q = pr[pn].se, pq = 1, apq = 1;
+	ll tn = n, tk = k, tr, r, t1, t2, t3;
+	tr = r = n - k;
+	ll sum = 1;
+
+	if (!n || !k || !r) return 1;
+
+	for (int i = 0; i < q; i++)
+		pq *= p;
+
+	while (tr || tk) {
+		t1 = tr % p, t2 = tk % p;
+		oo = (oo + t1 + t2) / p;
+		e[d++] += oo;
+		tr /= p, tk /= p;
+	}
+
+	for (int i = d - 2; i >= 0; i--)
+		e[i] += e[i + 1];
+
+	if (e[0] >= q) return 0;
+	q -= e[0];
+
+	for (int i = 0; i < q; i++)
+		apq *= p;
+
+	while (n) {
+		t1 = n % apq, t2 = r % apq, t3 = k % apq;
+		sum = sum * (((ll)set[pn][q][t1].fi * set[pn][q][t2].se % pq) * set[pn][q][t3].se % pq) % pq;
+		n /= p, r /= p, k /= p;
+	}
+
+	for (int i = 0; i < e[0]; i++)
+		sum = sum * p % pq;
+	if (e[q - 1] % 2 && (p > 2 || q < 3)) {
+		sum *= -1;
+		if (sum) sum += pq;
+	}
+
+	return sum;
+}
+
+void init() {
+	get_prime();
+	set.resize(pr.size());
+
+	for (int i = 0; i < set.size(); i++)
+		make_set(i);
+}
+
+ll china() {
+	ll sum = 0, temp;
+	ll pq;
+
+	for (int i = 0; i < pr.size(); i++) {
+		pq = 1;
+		for (int j = 0; j < pr[i].second; j++)
+			pq *= pr[i].first;
+		temp = K_MOD / pq;
+		sum = (sum + temp * uclid(pq, temp % pq) % K_MOD * ans[i] % K_MOD) % K_MOD;
+	}
+
+	return sum;
+}
+
+int main() {
+	ll n, k;
+	scanf("%lld %lld %lld", &n, &k, &K_MOD);
+	init();
+
+	for (int i = 0; i < pr.size(); i++)
+		ans.push_back(lucas(n, k, i));
+
+	printf("%lld", china());
+}

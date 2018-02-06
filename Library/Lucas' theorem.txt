@@ -1,0 +1,12 @@
+ll lucas(ll n, ll k) {
+	ll t1, t2;
+
+	ll sum = 1;
+	while (n || k) {
+		t1 = n % MOD; t2 = k % MOD;
+		sum = sum * (((ll)fac[t1] * inv[t2] % MOD) * inv[t1 - t2] % MOD) % MOD;
+		n /= MOD, k /= MOD;
+	}
+
+	return sum;
+}

@@ -1,0 +1,42 @@
+#include<stdio.h>
+#include<malloc.h>
+
+typedef struct node{
+	int key;
+	struct node *p, *l, *r;
+}node;
+
+void insert_node(node **root, int key){
+	node *p, *t;
+	node *n;
+	
+	t = *root;
+	p = NULL;
+	
+	while(t != NULL){
+		p = t;
+		if(key < t->key) t = t -> l;	
+		else t = t -> r;
+	}
+	
+	n = (node *)malloc(sizeof(node));
+	n -> key = key;
+	n -> l = n -> r = NULL;
+	n -> p = p;
+	
+	if(p != NULL) 
+		if(key < p-> key) p -> l = n;
+		else p -> r = n;
+	else *root = n;
+}
+
+int main(){
+	int n, t;
+	scanf("%d", &n);
+	
+	node *root = NULL;
+	for(int i = 0; i < n; i++){
+		scanf("%d", &t);
+		insert_node(&root, t);
+	}
+}

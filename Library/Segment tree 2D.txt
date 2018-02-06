@@ -1,0 +1,85 @@
+#include<stdio.h>
+
+int tree[2049][2049] = {0};
+int n, size = 1;
+
+void inii(int i, int j) {
+	if (i < size) {
+		inii(i * 2, j);
+		inii(i * 2 + 1, j);
+		tree[i][j] = tree[i * 2][j] + tree[i * 2 + 1][j];
+	}
+}
+
+void inij(int i, int j) {
+	if (j < size) {
+		inij(i, j * 2);
+		inij(i, j * 2 + 1);
+		tree[i][j] = tree[i][j * 2] + tree[i][j * 2 +  1];
+	}
+}
+
+void update(int i, int j, int val) {
+	i += size - 1;
+	j += size - 1;
+	tree[i][j] = val;
+	int it;
+
+	while (j > 1) {
+		it = i;
+		while (it > 1) {
+			it /= 2;
+			tree[it][j] = tree[it * 2][j] + tree[it * 2 + 1][j];
+		}
+
+		j /= 2;
+		tree[i][j] = tree[i][j * 2] + tree[i][j * 2 + 1];
+	}
+
+	it = i;
+	while (it > 1) {
+		it /= 2;
+		tree[it][j] = tree[it * 2][j] + tree[it * 2 + 1][j];
+	}
+}
+
+// le가 목표구간, ll이 가변
+int find(int i, int j, int ile, int iri, int ill, int irr, int jle, int jri, int jll, int jrr) {
+	if (ill > iri || irr < ile || jll > jri || jrr < jle) return 0;
+	else if (ill >= ile && irr <= iri) {
+		if (jll >= jle && jrr <= jri)
+			return tree[i][j];
+		else
+			return find(i, j * 2, ile, iri, ill, irr, jle, jri, jll, (jll + jrr) / 2) + find(i, j * 2 + 1, ile, iri, ill, irr, jle, jri, (jll + jrr) / 2 + 1, jrr);
+	}
+	else return find(i * 2, j, ile, iri, ill, (ill + irr) / 2, jle, jri, jll, jrr) + find(i * 2 + 1, j, ile, iri, (ill + irr) / 2 + 1, irr, jle, jri, jll, jrr);
+}
+
+
+int main() {
+	int a, b, c, d, m;
+	scanf("%d %d", &n, &m);
+
+	while (size < n) size *= 2;
+
+	for (int i = 0; i < n; i++)
+		for (int j = 0; j < n; j++)
+			scanf("%d", &tree[i + size][j + size]);
+
+	for(int i = size; i < n + size; i++)
+		inij(i, 1);
+	for (int i = 1; i < n + size; i++)
+		inii(1, i);
+
+	while (m--) {
+		scanf("%d", &a);
+		if (a) {
+			scanf("%d %d %d %d", &a, &b, &c, &d);
+			printf("%d\n", find(1, 1, a, c, 1, size, b, d, 1, size));
+		}
+		else {
+			scanf("%d %d %d", &a, &b, &c);
+			update(a, b, c);
+		}
+	}
+}

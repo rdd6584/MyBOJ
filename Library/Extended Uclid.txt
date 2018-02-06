@@ -1,0 +1,26 @@
+#define MOD 1000000007
+typedef long long ll;
+
+ll uclid(ll r1, ll r2) {
+	ll r, t, s;
+	ll s1 = 1, s2 = 0;
+	ll t1 = 0, t2 = 1;
+	ll q;
+
+	while (r2) {
+		q = r1 / r2;
+		r = r1 - q * r2;
+		r1 = r2; r2 = r;
+
+		s = s1 - q * s2;
+		s1 = s2; s2 = s;
+
+		t = t1 - q * t2;
+		t1 = t2; t2 = t;
+	}
+
+	if (t1 < 0) t1 += MOD;
+	return t1;
+}
+
+// 나머지 연산의 역원 반환

@@ -1,0 +1,28 @@
+typedef struct node {
+	struct node *child;
+	struct node *gotail;
+	int num;
+} node;
+
+void insert(int p, int c) {
+	node *n = NULL, *temp = NULL;
+	n = (node *)malloc(sizeof(node));
+	n->num = c; n->child = NULL;
+
+	temp = fl[p].gotail;
+	temp->child = n;
+	fl[p].gotail = n;
+}
+
+	for (int i = 1; i <= n; i++)
+		fl[i].gotail = &fl[i];
+
+	for (int i = 0; i < m; i++) {
+		scanf("%d %d", &temp, &temp2);
+		fl[temp].num = temp;
+		fl[temp2].num = temp2;
+		insert(temp, temp2);
+		insert(temp2, temp);
+	}
+
+//gotail 관리 배열을 따로 빼놓는 것을 추천.

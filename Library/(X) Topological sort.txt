@@ -1,0 +1,51 @@
+typedef struct node {
+	struct node *child;
+	int num;
+}node;
+
+node l[32001];
+node *gotail[32001];
+char st[32001] = {0};
+char visit[32001] = { 0 };
+int ans[32001];
+int top = 0;
+
+void insert(int p, int c) {
+	node *k;
+	k = (node *)malloc(sizeof(k));
+	k->child = NULL; k->num = c;
+	
+	gotail[p] -> child = k;
+	gotail[p] = k;
+}
+
+void go(int c) {
+	visit[c] = 1;
+
+	node *temp = &l[c];
+	if (temp->num) {
+		temp = temp->child;
+		while (temp) {
+			if(!visit[temp->num])
+				go(temp->num);
+			temp = temp->child;
+		}
+	}
+	ans[top++] = c;
+}
+
+
+
+for (int i = 1; i <= n; i++)
+		gotail[i] = &l[i];
+
+	for (int i = 0; i < m; i++) {
+		scanf("%d %d", &a, &b);
+		l[a].num = a;
+		st[b] = 1;
+		insert(a, b);  
+	}
+
+	for (int i = 1; i <= n; i++) {
+		if (!st[i]) go(i);
+	}

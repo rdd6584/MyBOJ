@@ -1,0 +1,75 @@
+#include<stdio.h>
+typedef struct{
+	int x, y;
+	int val;
+} vertex;
+
+int mat[102][102];
+int visit[102][102] = {0};
+vertex heap[10500];
+int top = 0;
+
+void push(vertex k){
+	int j;
+	heap[++top] = k;
+	j = top;
+
+	while(heap[j].val < heap[j / 2].val) {
+		k = heap[j];
+		heap[j] = heap[j / 2];
+		heap[j / 2] = k;
+		j /= 2;
+	}
+}
+
+vertex pop(){
+	int t2;
+	vertex t = heap[1], t3;
+	heap[1] = heap[top--];
+	
+	for(int i = 1; i * 2 <= top; i = t2){
+		t2 = heap[i * 2].val < heap[i * 2 + 1].val ? i * 2 : i * 2 + 1;
+		if(heap[i].val > heap[t2].val){
+			t3 = heap[t2];
+			heap[t2] = heap[i];
+			heap[i] = t3;
+		}
+	}
+	
+	return t;
+}
+
+int main(){
+	int n, m;
+	vertex v = {1, 1, 0}, in = {1, 1, 0};
+	scanf("%d %d", &m, &n);
+	
+	for(int i = 1; i <= n; i++)
+		for(int j = 1; j <= m; j++){
+			scanf("%1d", &mat[i][j]);
+			visit[i][j] = 1;
+		}
+	
+	insert(in);
+	visit[1][1] = 0;
+	
+	int dx[4] = {1, -1, 0, 0}, dy[4] = {0, 0, 1, -1};
+	int xx, yy;
+	
+	while(top && (v.x != n || v.y != m)){
+		v = pop();
+		
+		for(int i = 0; i < 4; i++){
+			xx = v.x + dx[i]; yy = v.y + dy[i];
+			if(visit[xx][yy]){
+				visit[xx][yy] = 0;
+				in.x = xx;
+				in.y = yy;
+				in.val = v.val + mat[xx][yy];
+				insert(in);
+			}
+		}
+	}
+	
+	printf("%d", v.val);
+}

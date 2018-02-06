@@ -1,0 +1,24 @@
+int qs(int left, int right){
+	int p = left, l = left, r = right + 1, t;
+	
+	while(l < r) {
+		while(l < right && vec[++l] <= vec[p]);
+		while(r > left && vec[--r] >= vec[p]);
+		
+		if(l < r){
+			t = vec[l];
+			vec[l] = vec[r];
+			vec[r] = t;
+		}
+		else {
+			t = vec[r];
+			vec[r] = vec[p];
+			vec[p] = t;
+			p = r;
+		}
+	}
+	
+	if(p == k - 1) return vec[p];
+	else if(p > k - 1) return qs(left, p - 1);
+	else return qs(p + 1, right);
+}
