@@ -1,6 +1,7 @@
 #define MOD 1000000007
 typedef long long ll;
 
+// find Modulo inverse
 ll uclid(ll r1, ll r2) {
 	ll r, t, s;
 	ll s1 = 1, s2 = 0;
@@ -22,5 +23,3 @@ ll uclid(ll r1, ll r2) {
 	if (t1 < 0) t1 += MOD;
 	return t1;
 }
-
-// 나머지 연산의 역원 반환
