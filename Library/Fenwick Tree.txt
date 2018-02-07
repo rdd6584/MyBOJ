@@ -39,8 +39,3 @@ int main(){
 		else if(a == 2) printf("%lld\n", find(c) - find(b-1));
 	}
 }
-
-펜윅트리의 이분탐색의 또다른 방법.
-find(n)부터 탐색.
-목표값이 더 작다면 temp = (i & -i); i -= temp; i += temp >> 1;
-목표값이 더 크다면 i += (i & -i) >> 1;
