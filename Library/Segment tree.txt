@@ -22,7 +22,7 @@ void add(int i, int val){ // add val to the segment. Notice i is a index in the 
 	}
 }
 
-void update(int i, int val){
+void update(int i, int val){ // change to val. i += size - 1;
 	tree[i] = val;
 	while(i > 1){
 		i /= 2;
