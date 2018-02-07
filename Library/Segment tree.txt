@@ -14,7 +14,7 @@ void init(int temp){
 	}
 }
 
-void update(int i, int data){ // just -1 to the segment. Notice i is a index in the tree.
+void update(int i, int data){ // add data to the segment. Notice i is a index in the tree.
 	val[i] -= data;
 	while(i > 1){
 		i /= 2;
