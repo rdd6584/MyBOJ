@@ -1,6 +1,6 @@
 #include<stdio.h>
 
-int val[16777217];
+int tree[16777217];
 
 int size = 1;
 int su;
@@ -10,21 +10,29 @@ void init(int temp){
 	if(temp < size){
 		init(temp * 2);
 		init(temp * 2 + 1);
-		val[temp] = val[temp * 2] + val[temp * 2 + 1];
+		tree[temp] = tree[temp * 2] + tree[temp * 2 + 1];
 	}
 }
 
-void update(int i, int data){ // add data to the segment. Notice i is a index in the tree.
-	val[i] -= data;
+void add(int i, int val){ // add val to the segment. Notice i is a index in the tree.
+	tree[i] += val;
 	while(i > 1){
 		i /= 2;
-		val[i] -= data;
+		tree[i] += val;
+	}
+}
+
+void update(int i, int val){
+	tree[i] = val;
+	while(i > 1){
+		i /= 2;
+		tree[i] = tree[i * 2] + tree[i * 2 + 1];
 	}
 }
 
 int find(int temp, int le, int ri, int tl, int tr){ // Sum(le ~ ri)
 	int sum = 0;
-	if(tl >= le && tr <= ri) return val[temp];
+	if(tl >= le && tr <= ri) return tree[temp];
 	if(tl > ri || tr < le) return 0;
 	
 	sum += find(temp * 2, le, ri, tl, (tl + tr) / 2);
@@ -32,8 +40,8 @@ int find(int temp, int le, int ri, int tl, int tr){ // Sum(le ~ ri)
 }
 
 int search(int temp){ // find x in (sum(1~x) == temp). faster than bin search
-	if(val[temp] + su < k) {
-		su += val[temp];
+	if(tree[temp] + su < k) {
+		su += tree[temp];
 		search(temp + 1);
 	}
 	
@@ -53,7 +61,7 @@ int main(){
 	while(size < n) size *= 2;
 	
 	for(int i = 0; i < n; i++)
-		val[i + size] = 1;
+		tree[i + size] = 1;
 		
 	init(1);
 	
@@ -64,7 +72,7 @@ int main(){
 		
 		su = -1 * (find(1, 1, last, 1, size));
 		
-		if(su + val[1] < k) su += val[1];
+		if(su + tree[1] < k) su += tree[1];
 		
 		last = search(1);
 		if(last == or) printf("%d", n-kk+1);
