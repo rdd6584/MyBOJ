@@ -1,5 +1,3 @@
-typedef long long ll;
-
 ll modulo(ll a, ll b, ll mod) {
 	ll sum = 1;
 

@@ -1,71 +1,22 @@
-#include<stdio.h>
+int tree[1048576];
+int lz[1048576];
+int szz = 1;
 
-typedef struct{
-	int l, r;
-	long long val;
-	long long fixed;
-} tree;
-
-tree t[2097153];
-int size = 1;
-
-void init(int temp){
-	if(temp < size){
-		init(temp * 2);
-		init(temp * 2 + 1);
-		t[temp].l = t[temp * 2].l;
-		t[temp].r = t[temp * 2 + 1].r;
-		t[temp].val = t[temp * 2].val + t[temp * 2 + 1].val;
-	}
-}
-
-void update(int temp, long long va ,int le, int ri){
-	if(t[temp].l >= le && t[temp].r <= ri) {
-		t[temp].fixed += va;
-		for(int i = temp / 2; i > 0; i /= 2)
-			t[i].val += va * (t[temp].r - t[temp].l + 1);
+void update(int i, int l, int r, int le, int ri, int val) {
+	if (l > ri || r < le) return;
+	if (le >= l && ri <= r) {
+		lz[i] += val;
 		return;
 	}
-	if(t[temp].l > ri || t[temp].r < le) return;
-	
-	update(temp * 2, va, le, ri);
-	update(temp * 2 + 1, va, le, ri);
+
+	update(i * 2, l, r, le, (le + ri) / 2, val);
+	update(i * 2 + 1, l, r, (le + ri) / 2 + 1, ri, val);
 }
 
-long long find(int temp, int le, int ri, long long fix){
-	if(t[temp].l >= le && t[temp].r <= ri) return t[temp].val + (t[temp].fixed + fix) * (t[temp].r - t[temp].l + 1);
-	if(t[temp].l > ri || t[temp].r < le) return 0;
-	
-	return find(temp * 2, le, ri, fix + t[temp].fixed) + find(temp * 2 + 1, le, ri, fix + t[temp].fixed);
-}
+int find(int i, int l, int r, int le, int ri, int lzz) {
+	lzz += lz[i];
+	if (l > ri || r < le) return 0;
+	if (le >= l && ri <= r) return lzz;
 
-int main(){
-	int n, m, k;
-	scanf("%d %d %d", &n, &m, &k);
-	m += k;
-	long long a, b, c, d;
-	
-	while(size < n) size *= 2;
-	
-	for(int i = 0; i < n; i++){
-		scanf("%lld", &t[i + size].val);
-		t[i + size].l = t[i + size].r = i + 1;
-	}
-	
-	for(int i = n; i < size; i++){
-		t[i + size].l = t[i + size].r = i + 1;
-	}
-	init(1);
-	
-	while(m--){
-		scanf("%d", &a);
-		if(a == 1) {
-			scanf("%lld %lld %lld", &b, &c, &d);
-			update(1, d, b, c);
-		}
-		else {
-			scanf("%lld %lld", &b, &c);
-			printf("%lld\n", find(1 ,b, c, 0));
-		}
-	}
+	return find(i * 2, l, r, le, (le + ri) / 2, lzz) + find(i * 2 + 1, l, r, (le + ri) / 2 + 1, ri, lzz);
 }

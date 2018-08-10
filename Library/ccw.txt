@@ -1,0 +1,5 @@
+ll ccw(pii a, pii b, pii c){
+    return 1LL * (b.first - a.first) * (c.second - a.second) - 1LL * (b.second - a.second) * (c.first - a.first);
+}
+
+// 0 겹치는 거 유의

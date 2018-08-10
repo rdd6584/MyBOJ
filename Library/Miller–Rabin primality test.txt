@@ -1,6 +1,4 @@
-typedef unsigned long long ull;
 // (n < 1373653) // (n < 9080191) // (n < 4759123141)
-int a[2] = {2, 3};
 int a[3][3] = { { 2, 3 }, {31, 73}, { 2, 7, 61} };
 
 ull modulo(ull a, ull b, ull mod) {

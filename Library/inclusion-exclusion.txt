@@ -1,0 +1,23 @@
+// pnm(-1, 1, -1); 호출
+
+int vec[15], n; // 원소배열, 총개수
+ll num; // 상한값
+
+ll gcd(ll b, ll a) {
+	if (a == 0) return b;
+	else if (b > a) return gcd(a, b % a);
+	else return gcd(b, a % b);
+}
+
+ll pnm(int deg, ll now, int mm) {
+	ll sum = 0;
+
+	if (deg != -1) now = now * vec[deg] / gcd(vec[deg], now);
+	if (now > num) return 0;
+	if (deg != -1) sum = num / now * mm;
+
+	for (int i = deg + 1; i < n; i++)
+		sum = (sum + pnm(i, now, -mm));
+
+	return sum;
+}

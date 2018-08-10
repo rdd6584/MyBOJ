@@ -1,0 +1,16 @@
+ll gcd(ll a, ll b) {
+	if (!b) return a;
+	if (a > b) return gcd(b, a % b);
+	return gcd(a, b % a);
+}
+
+pii find(pii v1, pii v2) {
+	int xd = v1.first - v2.first;
+	int yd = v1.second - v2.second;
+
+	if (!xd) return { (int)1e9, 0 };
+	if (!yd) return { 0, (int)1e9 };
+
+	int gc = gcd(abs(xd), abs(yd));
+	return { yd / gc, xd / gc };
+}

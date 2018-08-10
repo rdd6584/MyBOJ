@@ -1,74 +1,79 @@
-#include<stdio.h>
+#include <cstdio>
+#include <memory.h>
+#include <cstring>
+#include <vector>
+#include <deque>
+#include <cstdlib>
+#include <queue>
+#include <algorithm>
+#include <cmath>
+#include <cassert>
+#include <functional>
+#include <set>
+#include <list>
+#include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <bitset>
+#define sz(x) (int)(x).size()
+#define all(x) (x).begin(), (x).end()
+using namespace std;
 
-int val[16777217];
+typedef unsigned long long ull;
+typedef long long ll;
+typedef pair<int, int> pii;
+typedef pair<ll, ll> pll;
+typedef pair<ll, int> pli;
+const ll MOD = 1e9 + 7;
 
-int size = 1;
-int su;
-int n, m, k, or;
+priority_queue<int, vector<int>, greater<int> > pq;
+vector<int> v[200000]; queue<int> q; deque<int> dq;
 
-void init(int temp){
-	if(temp < size){
-		init(temp * 2);
-		init(temp * 2 + 1);
-		val[temp] = val[temp * 2] + val[temp * 2 + 1];
-	}
+int tree[524288];
+pii num[200000];
+int szz = 1;
+int ttt = 0;
+
+void init(int i) {
+	if (i >= szz) return;
+	init(i * 2); init(i * 2 + 1);
+	tree[i] = tree[i * 2] + tree[i * 2 + 1];
 }
 
-void update(int i){
-	val[i]--;
-	while(i > 1){
+int find(int i, int l, int r, int le, int ri) {
+	if (le > r || ri < l) return 0;
+	if (le >= l && ri <= r) return tree[i];
+	return find(i * 2, l, r, le, (le + ri) / 2) + find(i * 2 + 1, l, r, (le + ri) / 2 + 1, ri);
+}
+
+void update(int i, int val) {
+	i += szz;
+	tree[i] += val;
+
+	i /= 2;
+	while (i) {
+		tree[i] = tree[i * 2] + tree[i * 2 + 1];
 		i /= 2;
-		val[i]--;
 	}
 }
 
-int find(int temp, int le, int ri, int tl, int tr){
-	int sum = 0;
-	if(tl >= le && tr <= ri) return val[temp];
-	if(tl > ri || tr < le) return 0;
-	
-	sum += find(temp * 2, le, ri, tl, (tl + tr) / 2);
-	return sum + find(temp * 2 + 1, le, ri, (tl + tr) / 2 + 1, tr);
+// sum(0 ~ a) = x인 a찾기
+int worm(int i, int x) {
+	if (tree[i] < x) return worm(i + 1, x - tree[i]);
+	if (i >= szz) return i - szz;
+	return worm(i * 2, x);
 }
 
-int search(int temp){
-	if(val[temp] + su < k) {
-		su += val[temp];
-		search(temp + 1);
-	}
-	
-	else if(temp >= size) {
-		update(temp);
-		return temp - size + 1;
-	}
-	
-	else search(temp * 2);
+// dfs 넘버링
+void go(int o, int pre) {
+	num[o].first = ttt++;
+
+	for (int i = 0; i < sz(v[o]); i++)
+		if (v[o][i] != pre) go(v[o][i], o);
+	num[o].second = ttt - 1;
 }
 
-int main(){
-
-	scanf("%d %d %d", &n, &m, &or);
-	int last = n, kk = n, tt;
-	
-	while(size < n) size *= 2;
-	
-	for(int i = 0; i < n; i++)
-		val[i + size] = 1;
-		
-	init(1);
-	
-	while(kk){
-		su = 0;
-		k = m % kk;
-		if(k == 0) k = kk;
-		
-		su = -1 * (find(1, 1, last, 1, size));
-		
-		if(su + val[1] < k) su += val[1];
-		
-		last = search(1);
-		if(last == or) printf("%d", n-kk+1);
-		
-		kk--;
-	}
+int main() {
+	while (szz < n) szz *= 2;
+	go(0, -1);
 }

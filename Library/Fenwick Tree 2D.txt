@@ -1,0 +1,22 @@
+int n;
+int mat[1025][1025];
+int tree[1025][1025];
+
+void update(int x, int y, int val) {
+	val -= mat[x][y];
+	mat[x][y] += val;
+
+	for (int i = x; i <= n; i += (i & -i))
+		for (int j = y; j <= n; j += (j & -j))
+			tree[i][j] += val;
+}
+
+int find(int x, int y) {
+	int sum = 0;
+
+	for (int i = x; i; i -= (i & -i))
+		for (int j = y; j; j -= (j & -j))
+			sum += tree[i][j];
+
+	return sum;
+}
