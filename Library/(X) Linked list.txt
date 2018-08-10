@@ -25,4 +25,4 @@ void insert(int p, int c) {
 		insert(temp2, temp);
 	}
 
-//gotail °ü¸® ¹è¿­À» µû·Î »©³õ´Â °ÍÀ» ÃßÃµ.
+//gotail ê´€ë¦¬ ë°°ì—´ì„ ë”°ë¡œ ë¹¼ë†“ëŠ” ê²ƒì„ ì¶”ì²œ.
